@@ -4,12 +4,12 @@ export class BaseRequestModel {
     public query?: string;
     public from?: string;
     public to?: string;
-    public page?: number = 1;
-    public count?: number = 10;
+    public pageNumber?: number = 1;
+    public pageSize?: number = 10;
 
     constructor() {
-        this.page = 1;
-        this.count = 10;
+        this.pageNumber = 1;
+        this.pageSize = 10;
         this.sortBy = 'asc';
     }
 

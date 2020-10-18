@@ -1,13 +1,16 @@
-import { ApiPropertyOptional } from "@nestjs/swagger/dist/decorators";
-import { SortDirection } from "./sorting-direction";
+import { ApiPropertyOptional, ApiQuery } from "@nestjs/swagger/dist/decorators";
+import { IsNumber } from "class-validator";
+import { SortingDirection } from "./sorting-direction";
 
 export class PagingParams {
     @ApiPropertyOptional()
+    @IsNumber()
     pageNumber: number;
     @ApiPropertyOptional()
+    @IsNumber()
     pageSize: number;
     @ApiPropertyOptional()
-    sortingDirection: SortDirection;
+    sortingDirection: SortingDirection;
     @ApiPropertyOptional()
     orderByPropertyName: string;
     @ApiPropertyOptional()

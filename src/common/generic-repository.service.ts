@@ -58,13 +58,13 @@ export class BaseService<T extends Document> {
   }
 
   public async getAllPaginatedData(filter: any = {}, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
-    options.count = options.count || DEFAULT_PAGINATED_ITEMS_COUNT;
-    options.page = options.page || 1;
+    options.pageSize = Number(options.pageSize) || DEFAULT_PAGINATED_ITEMS_COUNT;
+    options.pageNumber = Number(options.pageNumber) || 1;
 
     const query = this.model
       .find({ ...filter })
-      .skip((options.count * options.page) - options.count)
-      .limit(options.count);
+      .skip((options.pageSize * options.pageNumber) - options.pageSize)
+      .limit(options.pageSize);
 
     if (options.populate && options.populate.length) {
       query.populate(options.populate);
@@ -74,8 +74,8 @@ export class BaseService<T extends Document> {
       query.select(options.select);
     }
 
-    if (options.sort) {
-      query.sort({ [options.sort]: options.sortBy || 'asc' });
+    if (options.orderByPropertyName) {
+      query.sort({ [options.orderByPropertyName]: options.sortingDirection || 'asc' });
     }
 
     const result = await query.lean().exec();
@@ -85,10 +85,10 @@ export class BaseService<T extends Document> {
     const numberOfDocs = await this.model.countDocuments({ ...filter });
 
     return {
-      page: options.page,
+      pageNumber: options.pageNumber,
       totalItems: numberOfDocs,
-      totalPages: Math.ceil(numberOfDocs / options.count),
-      count: options.count,
+      totalPages: Math.ceil(numberOfDocs / options.pageSize),
+      pageSize: options.pageSize,
       items: result
     };
   }

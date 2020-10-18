@@ -10,8 +10,8 @@ export class BasePaginatedResponse<P> {
     public items: P[];
     public totalItems: number;
     public totalPages: number;
-    public count: number;
-    public page: number;
+    public pageSize: number;
+    public pageNumber: number;
   }
   
   export class BaseErrorMessageClass {

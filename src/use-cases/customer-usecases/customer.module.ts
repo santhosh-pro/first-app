@@ -8,7 +8,7 @@ import { GetCustomerListController } from './get-customer-list/get-customer-list
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema },{ name: Payment.name, schema: PaymentSchema }])
+        MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema },{ name: Payment.name, schema: PaymentSchema }]),
     ],
     controllers: [CreateCustomerController,GetCustomerListController],
     providers: [CustomerService, 
