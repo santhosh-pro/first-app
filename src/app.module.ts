@@ -3,11 +3,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './schemas/database.module';
+//import { AutomapperModule } from 'nestjsx-automapper/dist/automapper.module';
 
 @Module({
   imports: [
     CustomerModule,
-    DatabaseModule
+    DatabaseModule,
+    //AutomapperModule.withMapper()
   ],
   controllers: [
     AppController

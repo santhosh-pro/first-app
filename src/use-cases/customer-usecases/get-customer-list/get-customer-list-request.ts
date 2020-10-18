@@ -1,4 +1,4 @@
-import { MongooseQueryModel } from 'src/common/MongooseQueryModel';
-export class GetCustomerListRequest extends MongooseQueryModel  {
+import {PagingParams} from "../../../common/paging-params";
+export class GetCustomerListRequest extends PagingParams  {
  
 }
