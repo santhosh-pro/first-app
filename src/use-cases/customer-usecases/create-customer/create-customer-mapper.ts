@@ -3,7 +3,7 @@ import { Customer } from "src/schemas/models/customer";
 import { CreateCustomerRequest } from "./create-customer-request";
 
 @Profile()
-class CreateCustomerMapper extends ProfileBase {
+export class CreateCustomerMapper extends ProfileBase {
     constructor(mapper: AutoMapper) {
         super();
 

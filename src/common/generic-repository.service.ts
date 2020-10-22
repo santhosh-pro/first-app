@@ -57,7 +57,7 @@ export class BaseService<T extends Document> {
       .update(filter, updatedDoc, { session, multi: true });
   }
 
-  public async getAllPaginatedData(filter: any = {}, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
+  public async getAllPaginatedData(filter: any = {},populate:any, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
     options.pageSize = Number(options.pageSize) || DEFAULT_PAGINATED_ITEMS_COUNT;
     options.pageNumber = Number(options.pageNumber) || 1;
 
@@ -66,8 +66,8 @@ export class BaseService<T extends Document> {
       .skip((options.pageSize * options.pageNumber) - options.pageSize)
       .limit(options.pageSize);
 
-    if (options.populate && options.populate.length) {
-      query.populate(options.populate);
+    if (populate) {
+      query.populate(populate);
     }
 
     if (options.select) {
