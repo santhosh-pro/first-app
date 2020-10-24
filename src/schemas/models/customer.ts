@@ -21,3 +21,5 @@ CustomerSchema.virtual('payments',{
   localField:'_id',
   foreignField:'customerId'
 })
+
+// CustomerSchema.pre( "deleteMany", { document: false, query: true }, async function (next) { const docs = await this.model.find(this.getFilter()); const users = docs.map((item) => item._id); await UserLink.deleteMany({ user: { $in: users } }); next(); } );

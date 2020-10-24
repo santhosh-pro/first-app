@@ -1,6 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Customer } from './customer';
 import { Invoice } from './invoice';
 
 export type PaymentDocument = Payment & Document;
@@ -12,6 +13,8 @@ export class Payment extends Document {
 
   @Prop()
   amount:number;
+
+  customer:Customer
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
@@ -23,7 +26,7 @@ PaymentSchema.virtual('invoices',{
 })
 
 PaymentSchema.virtual('customer',{
-  ref:Payment.name,
+  ref:'Customer',
   localField:'customerId',
   foreignField:'_id',
   justOne:true

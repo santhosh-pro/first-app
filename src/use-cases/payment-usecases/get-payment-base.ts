@@ -1,5 +1,6 @@
 import { PaymentBase } from "./payment-base";
 
-export class GetPaymentBase  extends PaymentBase{
-    
+export interface GetPaymentBase  extends PaymentBase{
+    id:string;
+    customerName:string;
 }

@@ -17,12 +17,13 @@ export class GetPaymentListController {
 
    let populate=  { 
     path: 'customer',
+    select: 'name'
     // populate:{
     //   path:'invoices'
     // }
   };
 
-   const result=  await this.repository.getAllPaginatedData({},populate,query);
+   const result=  await this.repository.paged({},populate,query);
    const response=this.mapper.response(result);
   
    return response;

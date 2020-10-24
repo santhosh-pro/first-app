@@ -57,7 +57,7 @@ export class BaseService<T extends Document> {
       .update(filter, updatedDoc, { session, multi: true });
   }
 
-  public async getAllPaginatedData(filter: any = {},populate:any, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
+  public async paged(filter: any = {},populate:any, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
     options.pageSize = Number(options.pageSize) || DEFAULT_PAGINATED_ITEMS_COUNT;
     options.pageNumber = Number(options.pageNumber) || 1;
 
@@ -93,13 +93,13 @@ export class BaseService<T extends Document> {
     };
   }
 
-  public async getAll(filter: any = {}, populate: Array<any> = []) {
-    const query = this.model.find({ ...filter, ...DEFAULT_QUERY_FILTER });
-    if (populate && populate.length) {
-      query.populate(populate);
-    }
-    return query.lean().exec();
-  }
+  // public async getAll(filter: any = {}, populate: Array<any> = []) {
+  //   const query = this.model.find({ ...filter, ...DEFAULT_QUERY_FILTER });
+  //   if (populate && populate.length) {
+  //     query.populate(populate);
+  //   }
+  //   return query.lean().exec();
+  // }
 
   public async count(filter: any = {}): Promise<number> {
     return this.model.count(filter);

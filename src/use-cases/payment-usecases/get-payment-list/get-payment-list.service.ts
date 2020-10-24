@@ -8,7 +8,7 @@ import { Payment } from 'src/schemas/models/payment';
 export class GetPaymentListService extends BaseService<Payment & Document> {
 
     constructor(@InjectModel(Payment.name) protected readonly _model: Model<Payment & Document>
-           ) {
-    super(_model);
-}
+    ) {
+        super(_model);
+    }
 }
