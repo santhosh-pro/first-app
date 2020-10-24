@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
-
 import { Customer, CustomerSchema } from 'src/schemas/models/customer';
 import { InvocieSchema, Invoice } from 'src/schemas/models/invoice';
 import { Payment, PaymentSchema } from 'src/schemas/models/payment';
