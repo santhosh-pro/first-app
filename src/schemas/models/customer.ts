@@ -21,20 +21,3 @@ CustomerSchema.virtual('payments',{
   localField:'_id',
   foreignField:'customerId'
 })
-
-CustomerSchema.set('toJSON', {
-  transform: function(doc, ret) {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-  },
-  virtuals: true
-});
-CustomerSchema.set('toObject', {
-  transform: function(doc, ret) {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-  },
-  virtuals: true
-});

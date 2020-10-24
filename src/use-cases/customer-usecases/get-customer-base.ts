@@ -1,6 +1,11 @@
 import { CustomerBase } from "./customer-base";
 
-export class GetCustomerBase extends CustomerBase {
+export interface GetCustomerBase extends CustomerBase {
     id:string;
-    payments:any[]
+    payments:GetPaymentBase[]
+}
+
+export interface GetPaymentBase {
+    id:string;
+    amount:number
 }

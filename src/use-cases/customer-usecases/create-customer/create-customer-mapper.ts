@@ -1,12 +1,19 @@
-import { AutoMapper, Profile, ProfileBase } from "nestjsx-automapper";
 import { Customer } from "src/schemas/models/customer";
 import { CreateCustomerRequest } from "./create-customer-request";
+import { CreateCustomerResponse } from "./create-customer-response";
 
-@Profile()
-export class CreateCustomerMapper extends ProfileBase {
-    constructor(mapper: AutoMapper) {
-        super();
+export class CreateCustomerMapper{
+    constructor() {
+   }
 
-        mapper.createMap(CreateCustomerRequest, Customer);
+   response(item:Customer):CreateCustomerResponse {
+    return null;
+   }
+
+   request(item:CreateCustomerRequest):Partial<Customer> {
+       var customer:Partial<Customer>= {
+           name:item.name
+       }
+       return customer;
    }
 }
