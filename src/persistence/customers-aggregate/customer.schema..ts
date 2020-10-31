@@ -1,7 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Payment } from './payment';
+import { Payment } from '../payment-aggregate/payment';
 
 export type CustomerDocument = Customer & Document;
 

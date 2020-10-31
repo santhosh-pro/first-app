@@ -1,4 +1,4 @@
-import { Customer } from "src/schemas/models/customer";
+import { Customer } from "src/persistence/customers-aggregate/customer.schema.";
 import { CreateCustomerRequest } from "./create-customer-request";
 import { CreateCustomerResponse } from "./create-customer-response";
 
@@ -7,7 +7,7 @@ export class CreateCustomerMapper{
    }
 
    response(item:Customer):CreateCustomerResponse {
-    return null;
+    return item;
    }
 
    request(item:CreateCustomerRequest):Partial<Customer> {

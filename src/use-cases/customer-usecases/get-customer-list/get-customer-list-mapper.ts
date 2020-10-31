@@ -1,6 +1,6 @@
-import { BasePaginatedResponse } from "src/common/BaseResponseModel";
+import { PagedResponse } from "src/common/paged-response";
 import { SortingDirection } from "src/common/sorting-direction";
-import { Customer } from "src/schemas/models/customer";
+import { Customer } from "src/persistence/customers-aggregate/customer.schema.";
 import { GetCustomerBase } from "../get-customer-base";
 import { GetCustomerListResponse } from "./get-customer-list-response";
 
@@ -8,7 +8,7 @@ export class GetCustomerListMapper {
   constructor() {
   }
 
-  public response(request: BasePaginatedResponse<Customer>): GetCustomerListResponse {
+  public response(request: PagedResponse<Customer>): GetCustomerListResponse {
 
     let customers: GetCustomerBase[] = [];
     request.items.forEach((item: any) => {
@@ -21,11 +21,12 @@ export class GetCustomerListMapper {
 
 
     let response: GetCustomerListResponse = {
-      orderByPropertyName: '',
-      sortDirection: SortingDirection.Ascending,
-      page: request.pageNumber,
-      size: request.pageSize,
-      totalCount: request.totalItems,
+      orderByPropertyName: request.orderByPropertyName,
+      sortingDirection: SortingDirection.Ascending,
+      pageNumber: request.pageNumber,
+      pageSize: request.pageSize,
+      totalCount: request.totalCount,
+      totalPages:request.totalPages,
       items: customers
     }
     return response;

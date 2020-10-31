@@ -23,7 +23,7 @@ export class GetPaymentListController {
     // }
   };
 
-   const result=  await this.repository.paged({},populate,query);
+   const result=  await this.repository.pagedAsync(query.pageNumber,query.pageSize,query.orderByPropertyName,query.sortingDirection,{},populate,null);
    const response=this.mapper.response(result);
   
    return response;

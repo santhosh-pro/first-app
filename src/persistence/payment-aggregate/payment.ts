@@ -1,8 +1,8 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Customer } from './customer';
-import { Invoice } from './invoice';
+import { Customer } from '../customers-aggregate/customer.schema.';
+import { Invoice } from '../models/invoice';
 
 export type PaymentDocument = Payment & Document;
 
@@ -11,7 +11,7 @@ export class Payment extends Document {
   @Prop()
   customerId:Types.ObjectId
 
-  @Prop()
+  @Prop({required:true})
   amount:number;
 
   customer:Customer

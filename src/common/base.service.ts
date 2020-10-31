@@ -1,10 +1,13 @@
 import { ClientSession, Document, DocumentQuery, Model, Types } from 'mongoose';
-import { BasePaginatedResponse } from './BaseResponseModel';
-import { MongoosePaginateQuery } from './MongoosePaginateQuery';
+import { IBaseService } from './i.base.service';
+import { IUnitOfWork } from './i.unit-of-work.service';
+import { DEFAULT_PAGINATED_ITEMS_COUNT, DEFAULT_QUERY_FILTER } from './mongoose.constant';
 import { MongooseQueryModel } from './MongooseQueryModel';
+import { PagedResponse } from './paged-response';
+import { SortingDirection } from './sorting-direction';
 
 
-export class BaseService<T extends Document> {
+export class BaseService<T extends Document> implements IBaseService<T>,IUnitOfWork{
   constructor(private model: Model<T>) {
   }
   get dbModel() {
@@ -38,7 +41,7 @@ export class BaseService<T extends Document> {
     return query.exec();
   }
 
-  public async create(doc: T | T[] | Partial<T> | Partial<T[]>, session: ClientSession): Promise<T | T[]> {
+  public async insert(doc: T | T[] | Partial<T> | Partial<T[]>, session: ClientSession): Promise<T | T[]> {
     return await this.model.create(doc as any, { session });
   }
 
@@ -52,30 +55,38 @@ export class BaseService<T extends Document> {
       .updateOne(condition, updatedDoc, { session }).exec();
   }
 
-  public async bulkUpdate(filter: any, updatedDoc: any, session: ClientSession) {
+  public async updateMany(filter: any, updatedDoc: any, session: ClientSession) {
     return this.model
       .update(filter, updatedDoc, { session, multi: true });
   }
 
-  public async paged(filter: any = {},populate:any, options: Partial<MongoosePaginateQuery> | any): Promise<BasePaginatedResponse<any>> {
-    options.pageSize = Number(options.pageSize) || DEFAULT_PAGINATED_ITEMS_COUNT;
-    options.pageNumber = Number(options.pageNumber) || 1;
+  public async pagedAsync(
+    pageNumber:any,
+    pageSize:any,
+    orderByPropertyName:string,
+    sortingDirection:SortingDirection,
+    filter: any = {},
+    populate:any, 
+    select:any): Promise<PagedResponse<any>> {
+
+    pageSize = Number(pageSize) || DEFAULT_PAGINATED_ITEMS_COUNT;
+    pageNumber = Number(pageNumber) || 1;
 
     const query = this.model
       .find({ ...filter })
-      .skip((options.pageSize * options.pageNumber) - options.pageSize)
-      .limit(options.pageSize);
+      .skip((pageSize * pageNumber) - pageSize)
+      .limit(pageSize);
 
     if (populate) {
       query.populate(populate);
     }
 
-    if (options.select) {
-      query.select(options.select);
+    if (select) {
+      query.select(select);
     }
 
-    if (options.orderByPropertyName) {
-      query.sort({ [options.orderByPropertyName]: options.sortingDirection || 'asc' });
+    if (orderByPropertyName) {
+      query.sort({ [orderByPropertyName]: sortingDirection || SortingDirection.Ascending });
     }
 
     const result = await query.lean().exec();
@@ -85,22 +96,16 @@ export class BaseService<T extends Document> {
     const numberOfDocs = await this.model.countDocuments({ ...filter });
 
     return {
-      pageNumber: options.pageNumber,
-      totalItems: numberOfDocs,
-      totalPages: Math.ceil(numberOfDocs / options.pageSize),
-      pageSize: options.pageSize,
+      pageNumber: pageNumber,
+      totalCount: numberOfDocs,
+      totalPages: Math.ceil(numberOfDocs / pageSize),
+      pageSize: pageSize,
+      orderByPropertyName:orderByPropertyName,
+      sortingDirection:sortingDirection,
       items: result
     };
   }
-
-  // public async getAll(filter: any = {}, populate: Array<any> = []) {
-  //   const query = this.model.find({ ...filter, ...DEFAULT_QUERY_FILTER });
-  //   if (populate && populate.length) {
-  //     query.populate(populate);
-  //   }
-  //   return query.lean().exec();
-  // }
-
+  
   public async count(filter: any = {}): Promise<number> {
     return this.model.count(filter);
   }
@@ -135,33 +140,6 @@ export class BaseService<T extends Document> {
     session.endSession();
   }
 
-  async withRetrySession(txnFn: Function) {
-    const startTime = Date.now();
-    while (true) {
-      const session = await this.startSession();
-      try {
-        const result = await txnFn(session);
-        await this.commitTransaction(session);
-        return result;
-      } catch (e) {
-        const isTransientError = e.errorLabels && e.errorLabels.includes('TransientTransactionError') && this.hasNotTimedOut(startTime, MAX_TRANSACTION_RETRY_TIMEOUT);
-        const isCommitError = e.errorLabels && e.errorLabels.includes('UnknownTransactionCommitResult') && this.hasNotTimedOut(startTime, MAX_TRANSACTION_RETRY_TIMEOUT);
-
-        if (!isTransientError || !isCommitError) {
-          await this.handleError(session, e);
-        }
-      }
-    }
-  }
-
-  private hasNotTimedOut(startTime, max) {
-    return Date.now() - startTime < max;
-  }
-
-  protected async handleError(session, err) {
-    await this.abortTransaction(session);
-    throw err;
-  }
 
   private queryBuilder(model: MongooseQueryModel, query: DocumentQuery<any, any>) {
     if (model.populate && model.populate.length) {
@@ -182,15 +160,5 @@ export class BaseService<T extends Document> {
   }
 
 }
-
-
-export const DEFAULT_QUERY_FILTER = {
-    isDeleted: false
-  };
-  
-  export const DEFAULT_PAGINATED_ITEMS_COUNT = 10;
-  
-  export const MAX_TRANSACTION_RETRY_TIMEOUT = 120000;
-
  
   

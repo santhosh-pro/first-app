@@ -1,13 +1,13 @@
-import { BasePaginatedResponse } from "src/common/BaseResponseModel";
+import { PagedResponse } from "src/common/paged-response";
 import { SortingDirection } from "src/common/sorting-direction";
-import { Payment } from "src/schemas/models/payment";
+import { Payment } from "src/persistence/payment-aggregate/payment";
 import { GetPaymentBase } from "../get-payment-base";
 import { GetPaymentListResponse } from "./get-payment-list-response";
 
 export class GetPaymentListMapper {
     constructor() { }
 
-    response(request: BasePaginatedResponse<Payment>): GetPaymentListResponse {
+    response(request: PagedResponse<Payment>): GetPaymentListResponse {
         let items:GetPaymentBase[]=[];
 
         request.items.forEach((item:Payment) => {
@@ -21,14 +21,14 @@ export class GetPaymentListMapper {
             )
         });
 
-        let response:GetPaymentListResponse ={
-        totalCount:request.totalItems,
-        page:request.pageNumber,
-        orderByPropertyName:'',
-        sortDirection:SortingDirection.Ascending,
-        items:items,
-        size:request.pageSize
-        }
-        return response;
+        // let response:GetPaymentListResponse ={
+        // totalCount:request.totalItems,
+        // page:request.pageNumber,
+        // orderByPropertyName:'',
+        // sortDirection:SortingDirection.Ascending,
+        // items:items,
+        // size:request.pageSize
+        // }
+        return null;
     }
 }

@@ -1,9 +1,11 @@
 import { SortingDirection } from "./sorting-direction";
 
-export class PagedResponse {
-    size: number;
-    page: number;
+export class PagedResponse<T> {
+    pageSize: number;
+    pageNumber: number;
     totalCount: number;
+    totalPages:number;
     orderByPropertyName: string;
-    sortDirection: SortingDirection;
+    sortingDirection: SortingDirection;
+    items:T[];
 }

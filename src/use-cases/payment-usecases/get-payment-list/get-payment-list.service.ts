@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BaseService } from 'src/common/generic-repository.service';
-import { Payment } from 'src/schemas/models/payment';
+import { BaseService } from 'src/common/base.service';
+import { Payment } from 'src/persistence/payment-aggregate/payment';
 
 @Injectable()
 export class GetPaymentListService extends BaseService<Payment & Document> {
