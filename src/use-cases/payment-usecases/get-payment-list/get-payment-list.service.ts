@@ -1,14 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { BaseService } from 'src/common/base.service';
-import { Payment } from 'src/persistence/payment-aggregate/payment';
+import { IPaymentService } from 'src/persistence/payment/i.payment.service';
+import { GetPaymentListMapper } from './get-payment-list-mapper';
+import { GetPaymentListRequest } from './get-payment-list-request';
+import { GetPaymentListResponse } from './get-payment-list-response';
 
 @Injectable()
-export class GetPaymentListService extends BaseService<Payment & Document> {
+export class GetPaymentListService {
 
-    constructor(@InjectModel(Payment.name) protected readonly _model: Model<Payment & Document>
+    constructor(
+        private readonly paymentService: IPaymentService,
+        private readonly mapper: GetPaymentListMapper
     ) {
-        super(_model);
+    }
+
+    async Handle(request: GetPaymentListRequest): Promise<GetPaymentListResponse> {
+        let populate = {
+            path: 'customer',
+            select: 'name'
+            // populate:{
+            //   path:'invoices'
+            // }
+        };
+
+        const result = await this.paymentService.pagedAsync
+            (
+                request.pageNumber,
+                request.pageSize,
+                request.orderByPropertyName,
+                request.sortingDirection,
+                {},
+                populate,
+                null
+            );
+        const response = this.mapper.response(result);
+
+        return response;
     }
 }

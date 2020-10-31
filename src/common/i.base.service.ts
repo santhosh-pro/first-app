@@ -1,5 +1,5 @@
 import { ClientSession } from "mongoose";
-import { MongooseQueryModel } from "./MongooseQueryModel";
+import { MongooseQueryModel } from "./mongoose-query-model";
 import { PagedResponse } from "./paged-response";
 import { SortingDirection } from "./sorting-direction";
 
@@ -24,4 +24,11 @@ export abstract class IBaseService<T> {
     abstract update(condition: any, updatedDoc: any, session: ClientSession): Promise<T>;
     abstract updateMany(filter: any, updatedDoc: any, session: ClientSession);
     abstract delete(id: string, session: ClientSession): Promise<T>;
+
+
+    // Trans 
+    abstract startSession(): Promise<ClientSession>;
+    abstract commitTransaction(session: ClientSession);
+    abstract abortTransaction(session: ClientSession);
+    abstract withRetrySession(txnFn: Function);
 }

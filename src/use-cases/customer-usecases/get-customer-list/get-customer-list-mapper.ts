@@ -1,6 +1,6 @@
 import { PagedResponse } from "src/common/paged-response";
 import { SortingDirection } from "src/common/sorting-direction";
-import { Customer } from "src/persistence/customers-aggregate/customer.schema.";
+import { Customer } from "src/persistence/customer/customer.schema.";
 import { GetCustomerBase } from "../get-customer-base";
 import { GetCustomerListResponse } from "./get-customer-list-response";
 

@@ -5,6 +5,7 @@ import { CreateCustomerMapper } from "./../customer-usecases/create-customer/cre
 import { CreateCustomerService } from './create-customer/create-customer.service';
 import { GetCustomerListMapper } from './get-customer-list/get-customer-list-mapper';
 import { DatabaseModule } from 'src/persistence/database.module';
+import { GetCustomerListService } from './get-customer-list/get-customer-list.service';
 
 @Module({
     imports: [
@@ -12,6 +13,6 @@ import { DatabaseModule } from 'src/persistence/database.module';
     ],
     controllers: [CreateCustomerController, GetCustomerListController],
     providers: [
-          CreateCustomerService, CreateCustomerMapper, GetCustomerListMapper],
+          CreateCustomerService, CreateCustomerMapper, GetCustomerListMapper,GetCustomerListService],
 })
 export class CustomerModule { }

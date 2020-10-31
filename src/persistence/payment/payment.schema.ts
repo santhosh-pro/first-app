@@ -1,8 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Customer } from '../customers-aggregate/customer.schema.';
-import { Invoice } from '../models/invoice';
+import { Customer } from '../customer/customer.schema.';
 
 export type PaymentDocument = Payment & Document;
 
@@ -18,12 +17,6 @@ export class Payment extends Document {
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
-
-PaymentSchema.virtual('invoices',{
-  ref:Invoice.name,
-  localField:'_id',
-  foreignField:'paymentId'
-})
 
 PaymentSchema.virtual('customer',{
   ref:'Customer',

@@ -1,6 +1,6 @@
 import { PagedResponse } from "src/common/paged-response";
 import { SortingDirection } from "src/common/sorting-direction";
-import { Payment } from "src/persistence/payment-aggregate/payment";
+import { Payment } from "src/persistence/payment/payment.schema";
 import { GetPaymentBase } from "../get-payment-base";
 import { GetPaymentListResponse } from "./get-payment-list-response";
 
@@ -21,14 +21,15 @@ export class GetPaymentListMapper {
             )
         });
 
-        // let response:GetPaymentListResponse ={
-        // totalCount:request.totalItems,
-        // page:request.pageNumber,
-        // orderByPropertyName:'',
-        // sortDirection:SortingDirection.Ascending,
-        // items:items,
-        // size:request.pageSize
-        // }
-        return null;
+        let response:GetPaymentListResponse ={
+            orderByPropertyName: request.orderByPropertyName,
+            sortingDirection: SortingDirection.Ascending,
+            pageNumber: request.pageNumber,
+            pageSize: request.pageSize,
+            totalCount: request.totalCount,
+            totalPages:request.totalPages,
+            items: items
+        }
+        return response;
     }
 }

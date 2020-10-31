@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
-import { Customer, CustomerSchema } from 'src/persistence/customers-aggregate/customer.schema.';
-import { InvocieSchema, Invoice } from 'src/persistence/models/invoice';
-import { Payment, PaymentSchema } from 'src/persistence/payment-aggregate/payment';
-import { CustomerService } from './customers-aggregate/customer.service';
-import { ICustomerService } from './customers-aggregate/i.customer.service';
-import { IPaymentService } from './payment-aggregate/i.payment.service';
-import { PaymentService } from './payment-aggregate/payment.service';
+import { Customer, CustomerSchema } from './customer/customer.schema.';
+import { CustomerService } from './customer/customer.service';
+import { ICustomerService } from './customer/i.customer.service';
+import { IPaymentService } from './payment/i.payment.service';
+import { Payment, PaymentSchema } from './payment/payment.schema';
+import { PaymentService } from './payment/payment.service';
+
 @Module({
     imports: [
         MongooseModule.forFeature(
             [
                 { name: Customer.name, schema: CustomerSchema },
-                { name: Payment.name, schema: PaymentSchema },
-                { name: Invoice.name, schema: InvocieSchema }
+                { name: Payment.name, schema: PaymentSchema }
             ]
         )
     ],
@@ -31,7 +30,6 @@ import { PaymentService } from './payment-aggregate/payment.service';
             [
                 { name: Customer.name, schema: CustomerSchema },
                 { name: Payment.name, schema: PaymentSchema },
-                { name: Invoice.name, schema: InvocieSchema }
             ]
         ),
         {

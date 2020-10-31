@@ -1,4 +1,4 @@
-import { Customer } from "src/persistence/customers-aggregate/customer.schema.";
+import { Customer } from "src/persistence/customer/customer.schema.";
 import { CreateCustomerRequest } from "./create-customer-request";
 import { CreateCustomerResponse } from "./create-customer-response";
 

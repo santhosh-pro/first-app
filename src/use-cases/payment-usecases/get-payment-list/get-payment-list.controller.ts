@@ -1,31 +1,19 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger/dist/decorators';
-import { GetPaymentListMapper } from './get-payment-list-mapper';
 import { GetPaymentListRequest } from './get-payment-list-request';
+import { GetPaymentListResponse } from './get-payment-list-response';
 import { GetPaymentListService } from './get-payment-list.service';
 
 @ApiTags('payments')
 @Controller('payments')
 export class GetPaymentListController {
-    constructor(
-        private readonly repository: GetPaymentListService,
-        private readonly mapper:GetPaymentListMapper
-      ) { }
+  constructor(
+    private readonly getPaymentListService: GetPaymentListService
+  ) { }
 
-      @Get()
-  async get(@Query() query: GetPaymentListRequest): Promise<any> {
+  @Get()
+  async get(@Query() query: GetPaymentListRequest): Promise<GetPaymentListResponse> {
 
-   let populate=  { 
-    path: 'customer',
-    select: 'name'
-    // populate:{
-    //   path:'invoices'
-    // }
-  };
-
-   const result=  await this.repository.pagedAsync(query.pageNumber,query.pageSize,query.orderByPropertyName,query.sortingDirection,{},populate,null);
-   const response=this.mapper.response(result);
-  
-   return response;
+    return await this.getPaymentListService.Handle(query);
   }
 }

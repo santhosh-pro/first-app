@@ -1,13 +1,12 @@
 import { ClientSession, Document, DocumentQuery, Model, Types } from 'mongoose';
 import { IBaseService } from './i.base.service';
-import { IUnitOfWork } from './i.unit-of-work.service';
-import { DEFAULT_PAGINATED_ITEMS_COUNT, DEFAULT_QUERY_FILTER } from './mongoose.constant';
-import { MongooseQueryModel } from './MongooseQueryModel';
+import { DEFAULT_PAGINATED_ITEMS_COUNT, DEFAULT_QUERY_FILTER, MAX_TRANSACTION_RETRY_TIMEOUT } from './mongoose.constant';
+import { MongooseQueryModel } from './mongoose-query-model';
 import { PagedResponse } from './paged-response';
 import { SortingDirection } from './sorting-direction';
 
 
-export class BaseService<T extends Document> implements IBaseService<T>,IUnitOfWork{
+export class BaseService<T extends Document> implements IBaseService<T> {
   constructor(private model: Model<T>) {
   }
   get dbModel() {
@@ -124,22 +123,6 @@ export class BaseService<T extends Document> implements IBaseService<T>,IUnitOfW
     return Types.ObjectId.isValid(id);
   }
 
-  public async startSession(): Promise<ClientSession> {
-    const session = await this.model.db.startSession();
-    session.startTransaction();
-    return session;
-  }
-
-  public async commitTransaction(session: ClientSession) {
-    await session.commitTransaction();
-    session.endSession();
-  }
-
-  public async abortTransaction(session: ClientSession) {
-    await session.abortTransaction();
-    session.endSession();
-  }
-
 
   private queryBuilder(model: MongooseQueryModel, query: DocumentQuery<any, any>) {
     if (model.populate && model.populate.length) {
@@ -157,6 +140,51 @@ export class BaseService<T extends Document> implements IBaseService<T>,IUnitOfW
     if (model.sort) {
       query.sort({ [model.sort]: model.sortBy || 'asc' });
     }
+  }
+
+
+  public async startSession(): Promise<ClientSession> {
+    const session = await this.dbModel.db.startSession();
+    session.startTransaction();
+    return session;
+  }
+
+  public async commitTransaction(session: ClientSession) {
+    await session.commitTransaction();
+    session.endSession();
+  }
+
+  public async abortTransaction(session: ClientSession) {
+    await session.abortTransaction();
+    session.endSession();
+  }
+
+  async withRetrySession(txnFn: Function) {
+    const startTime = Date.now();
+    while (true) {
+      const session = await this.startSession();
+      try {
+        const result = await txnFn(session);
+        await this.commitTransaction(session);
+        return result;
+      } catch (e) {
+        const isTransientError = e.errorLabels && e.errorLabels.includes('TransientTransactionError') && this.hasNotTimedOut(startTime, MAX_TRANSACTION_RETRY_TIMEOUT);
+        const isCommitError = e.errorLabels && e.errorLabels.includes('UnknownTransactionCommitResult') && this.hasNotTimedOut(startTime, MAX_TRANSACTION_RETRY_TIMEOUT);
+
+        if (!isTransientError || !isCommitError) {
+          await this.handleError(session, e);
+        }
+      }
+    }
+  }
+
+  protected async handleError(session, err) {
+    await this.abortTransaction(session);
+    throw err;
+  }
+
+  private hasNotTimedOut(startTime, max) {
+    return Date.now() - startTime < max;
   }
 
 }
